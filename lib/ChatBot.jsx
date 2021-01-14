@@ -172,28 +172,55 @@ class ChatBot extends Component {
     }
   }
 
-  onNodeInserted = event => {
-    const { currentTarget: target } = event;
+  scrollToLastMessage = (fastScroll) => {
     const { enableSmoothScroll, disableAutoScroll } = this.props;
 
-    if (disableAutoScroll) return;
-
-    if (enableSmoothScroll && this.supportsScrollBehavior) {
-      target.scroll({
-        top: target.scrollHeight,
-        left: 0,
-        behavior: 'smooth'
-      });
+    if (disableAutoScroll) {
+      /*
+        If auto scroll disabled,
+        allow scroll to bottom only when already near at the last message
+      */
+      const requireDistance = 58;
+      if (this.content.scrollHeight - this.content.scrollTop < requireDistance) {
+        target.scrollTop = target.scrollHeight;
+      }
     } else {
-      target.scrollTop = target.scrollHeight;
+      if (enableSmoothScroll && this.supportsScrollBehavior) {
+        target.scroll({
+          top: target.scrollHeight,
+          left: 0,
+          behavior: 'smooth'
+        });
+      } else {
+        this.content.scrollTop = target.scrollHeight;
+      }
     }
+  }
+
+  onNodeInserted = event => {
+    const { currentTarget: target } = event;
+    this.scrollToLastMessage();
+    // const { enableSmoothScroll, disableAutoScroll } = this.props;
+
+    // if (disableAutoScroll) return;
+
+    // if (enableSmoothScroll && this.supportsScrollBehavior) {
+    //   target.scroll({
+    //     top: target.scrollHeight,
+    //     left: 0,
+    //     behavior: 'smooth'
+    //   });
+    // } else {
+    //   target.scrollTop = target.scrollHeight;
+    // }
   };
 
   onResize = () => {
-    const { disableAutoScroll } = this.props;
-    if (disableAutoScroll) return;
+    this.scrollToLastMessage();
+    // const { disableAutoScroll } = this.props;
+    // if (disableAutoScroll) return;
 
-    this.content.scrollTop = this.content.scrollHeight;
+    // this.content.scrollTop = this.content.scrollHeight;
   };
 
   onRecognitionChange = value => {
