@@ -174,7 +174,9 @@ class ChatBot extends Component {
 
   onNodeInserted = event => {
     const { currentTarget: target } = event;
-    const { enableSmoothScroll } = this.props;
+    const { enableSmoothScroll, disableAutoScroll } = this.props;
+
+    if (disableAutoScroll) return;
 
     if (enableSmoothScroll && this.supportsScrollBehavior) {
       target.scroll({
@@ -188,6 +190,9 @@ class ChatBot extends Component {
   };
 
   onResize = () => {
+    const { disableAutoScroll } = this.props;
+    if (disableAutoScroll) return;
+
     this.content.scrollTop = this.content.scrollHeight;
   };
 
@@ -736,6 +741,7 @@ ChatBot.propTypes = {
   customDelay: PropTypes.number,
   customStyle: PropTypes.objectOf(PropTypes.any),
   controlStyle: PropTypes.objectOf(PropTypes.any),
+  disableAutoScroll: PropTypes.bool,
   enableMobileAutoFocus: PropTypes.bool,
   enableSmoothScroll: PropTypes.bool,
   extraControl: PropTypes.objectOf(PropTypes.element),
@@ -788,6 +794,7 @@ ChatBot.defaultProps = {
   customStyle: {},
   controlStyle: { position: 'absolute', right: '0', top: '0' },
   customDelay: 1000,
+  disableAutoScroll: false,
   enableMobileAutoFocus: false,
   enableSmoothScroll: false,
   extraControl: undefined,
