@@ -172,34 +172,35 @@ class ChatBot extends Component {
     }
   }
 
-  scrollToLastMessage = (fastScroll) => {
+  scrollToLastMessage = (targetToScroll) => {
     const { enableSmoothScroll, disableAutoScroll } = this.props;
-
+    let target = targetToScroll || this.content;
+    
     if (disableAutoScroll) {
       /*
         If auto scroll disabled,
         allow scroll to bottom only when already near at the last message
       */
       const requireDistance = 58;
-      if (this.content.scrollHeight - this.content.scrollTop < requireDistance) {
-        target.scrollTop = target.scrollHeight;
+      if (this.content.scrollHeight - target.offsetParent.scrollHeight - target.scrollTop < requireDistance) {
+        target.scrollTop = this.content.scrollHeight;
       }
     } else {
       if (enableSmoothScroll && this.supportsScrollBehavior) {
         target.scroll({
-          top: target.scrollHeight,
+          top: this.content.scrollHeight,
           left: 0,
           behavior: 'smooth'
         });
       } else {
-        this.content.scrollTop = target.scrollHeight;
+        target.scrollTop = this.content.scrollHeight;
       }
     }
   }
 
   onNodeInserted = event => {
     const { currentTarget: target } = event;
-    this.scrollToLastMessage();
+    this.scrollToLastMessage(target);
     // const { enableSmoothScroll, disableAutoScroll } = this.props;
 
     // if (disableAutoScroll) return;
